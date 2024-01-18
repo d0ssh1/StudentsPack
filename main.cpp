@@ -1,6 +1,7 @@
 #include <iostream>
 #include "vector"
 #include "numeric"
+#include <algorithm>
 
 using namespace std;
 
@@ -25,6 +26,11 @@ public:
     Marks marks;
 
     Student(const string &name, const string &surname, unsigned int age) : name(name), surname(surname), age(age) {}
+
+    bool operator==(const Student &other) const {
+        // Пример сравнения по имени
+        return this->name == other.name;
+    };
 
     void getMark(int mark, Subjects subject) {
         switch (subject) {
@@ -55,7 +61,7 @@ public:
         return name;
     }
 
-    static bool isExcellentInSubject(const vector<unsigned int> &marks) {
+    bool isExcellentInSubject(const vector<unsigned int> &marks) {
         if (marks.empty()) { return true; }
 
         float averageMark = accumulate(marks.begin(), marks.end(), 0.0) / marks.size();
@@ -211,6 +217,75 @@ public:
 
 };
 
+class Parent {
+private:
+    vector<Student> childs;
+    vector<string> cringeStories = {" used to piss himself in bed in childhood up for 5 y.o. LOL ",
+                                    " belched so hard that a tooth fell out (DAMN SON WHERE'D YOU FIND THIS) ",
+                                    " hit the school window 32 times (by accident) ",
+                                    " attacked passers-by under the age of 18 (for fun) ",
+                                    " drank two liters of water a day and brushed teeth ",
+                                    " shoots tic tol videos about dragons and dances to cool music "};
+    string name;
+    bool MoodState = (rand() % 2 == 0);
+public:
+
+    explicit Parent(const string &name) : name(name) {}
+
+    void addChild(Student &student) {
+        childs.push_back(student);
+    }
+
+    void tellAboutChild(Student &student) {
+        string exc_status;
+        if (student.isExcellentStudent()) {
+            exc_status = "excellent student! ";
+        } else exc_status = "worst student in the world! ";
+
+        cout << "Parent " << name << " is saying that his child " << student.getName()
+             << cringeStories[rand() % cringeStories.size()]
+             << "but also " << student.getName() << cringeStories[rand() % cringeStories.size()]
+             << "and I want to say that thank's god he is the " <<
+             exc_status << endl;
+    }
+
+    void tellAboutRandomChild() {
+        if (childs.empty()) {
+            cout << "Sterilny (childfree)\n";
+            return;
+        } else {
+            unsigned int randChildIndex = rand() % childs.size();
+            tellAboutChild(childs[randChildIndex]);
+        }
+    }
+
+    void tellAboutSpecificChild(Student &student) {
+        auto it = find(childs.begin(), childs.end(), student);
+        if (it != childs.end()) {
+            tellAboutChild(student);
+        } else {
+            cout << "Sorry but this parent don't have this child. Try later ;) hehe\n";
+        }
+    }
+
+    void tellAboutAllChildrenShort() {
+        for (Student &child: childs) {
+            if (child.isExcellentStudent()) {
+                cout << "All of my children amazing!\n";
+            } else {
+                cout << "Hmhm.. Weather is amazing today ;)\n";
+            }
+        }
+    }
+
+    void tellAboutAllChildren() {
+        for (Student &child: childs) {
+            tellAboutChild(child);
+            cout << endl;
+        }
+    }
+};
+
 int main() {
     srand(time(0));
 
@@ -250,6 +325,12 @@ int main() {
     Lesson Algebra;
     Algebra.addToLesson(Tema);
     Stepanova.MoodyMoodMark(Tema);
+
+    cout << endl;
+    Parent Natalya("Natalya");
+    Natalya.addChild(Tema);
+    Natalya.addChild(Kolya);
+    Natalya.tellAboutAllChildren();
 
     return 0;
 }
