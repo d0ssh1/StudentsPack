@@ -263,7 +263,7 @@ public:
         }
     }
 
-    void tellAboutChild(Student &student) {
+    virtual void tellAboutChild(Student &student) {
         string exc_status;
         if (student.isExcellentStudent()) {
             exc_status = "excellent student! ";
@@ -295,7 +295,7 @@ public:
         }
     }
 
-    void tellAboutAllChildrenShort() {
+    virtual void tellAboutAllChildrenShort() {
         for (Student &child: childs) {
             if (child.isExcellentStudent() && MoodState) {
                 cout << "All of my children are amazing!\n";
@@ -305,7 +305,7 @@ public:
         }
     }
 
-    void tellAboutAllChildren() {
+    virtual void tellAboutAllChildren() {
         for (Student &child: childs) {
             tellAboutChild(child);
             cout << endl;
@@ -403,6 +403,37 @@ public:
 
 };
 
+class Grandmother : public Parent {
+private:
+    string name;
+public:
+
+    Grandmother(const string &name, const string &name1) : Parent(name), name(name1) {}
+
+    void tellAboutChild(Student &student) {
+        cout << "My grandchild " << student.getName() << "is the best!\n";
+    }
+
+    void tellAboutAllChildren() {
+        cout << "My grandchildren are the best!\n";
+    }
+
+    void tellAboutOther() {
+        vector<string> Phrases = {"Hmm.. you so stinky! Please get off from me and my grandchilds!",
+                                  "Ohhh... you soooo sweaty! Take this! *right hoock* BIM BIM BAM BAM",
+                                  "~H-Hi... TAKE THIS *left hoock*",
+                                  "Why are you so swagy swag? KYS! ╰（‵□′）╯",
+                                  "You look amazing today!",
+                                  "You are the worst child in the world! Heck...",
+                                  "What are you doing this evening? Do you want to sit on the bench with me?"};
+
+        int randPhrase = rand() % Phrases.size();
+        cout << Phrases[randPhrase] << endl;
+
+    }
+
+};
+
 int main() {
     srand(time(0));
 
@@ -449,6 +480,8 @@ int main() {
     Natalya.addChild(Kolya);
     Natalya.tellAboutAllChildren();
 
-    
+    Grandmother MotherOfMother("GodMother", "RegularMother");
+    MotherOfMother.tellAboutOther();
+
     return 0;
 }
