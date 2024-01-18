@@ -74,7 +74,7 @@ public:
 };
 
 class Teacher {
-private:
+protected:
     string name;
     string surname;
     unsigned int age;
@@ -92,7 +92,7 @@ public:
         student.getMark(mark, specialization);
     }
 
-    void MoodyMoodMark(Student student) {
+    virtual void MoodyMoodMark(Student &student) {
 
         bool exc = student.isExcellentStudent();
 
@@ -117,6 +117,32 @@ public:
     bool isMoodState() const {
         return MoodState;
     }
+};
+
+class GODTeacher : public Teacher {
+private:
+    bool MoodState = 1;
+public:
+    GODTeacher(const string &name, const string &surname, unsigned int age, Subjects specialization)
+            : Teacher(name, surname, age, specialization) {}
+
+    void MoodyMoodMark(Student &student) override {
+        giveMark(student, 5);
+        cout << student.getName() << " got 5! I love everything in this world! I'm so happy to live!\n";
+    };
+};
+
+class DEVILTeacher : public Teacher {
+private:
+    bool MoodState = 0;
+public:
+    DEVILTeacher(const string &name, const string &surname, unsigned int age, Subjects specialization)
+            : Teacher(name, surname, age, specialization) {}
+
+    void MoodyMoodMark(Student &student) override {
+        giveMark(student, 2);
+        cout << student.getName() << " got 2! I hate everything in this world! I want to destroy Earth!\n";
+    };
 };
 
 class Lesson {
@@ -162,13 +188,23 @@ int main() {
 
     cout << Tema.isExcellentStudent() << endl;
 
-    Lesson OOP;
-    OOP.addToLesson(Tema);
-    OOP.Marking(Eugene);
+    Lesson Matth;
+    Matth.addToLesson(Tema);
+    Matth.Marking(Eugene);
 
     Lesson Phys;
     Phys.addToLesson(Kolya);
     Phys.Marking(Vika);
+
+    GODTeacher Boris("Boris", "Abakumov", 24, Math);
+    Lesson OOP;
+    OOP.addToLesson(Tema);
+    Boris.MoodyMoodMark(Tema);
+
+    DEVILTeacher Skurihin("Eugene", "Skurihin", 100, Math);
+    Lesson Geometry;
+    Geometry.addToLesson(Tema);
+    Skurihin.MoodyMoodMark(Tema);
 
     return 0;
 }
