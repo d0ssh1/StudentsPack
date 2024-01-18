@@ -81,6 +81,7 @@ protected:
     Subjects specialization;
     bool MoodState = (rand() % 2 == 0); // 1 = good, 0 = bad
 public:
+    unsigned int mark_counter;
 
     Teacher(const string &name, const string &surname, unsigned int age, Subjects specialization) : name(name),
                                                                                                     surname(surname),
@@ -90,27 +91,51 @@ public:
 
     void giveMark(Student &student, unsigned int mark) {
         student.getMark(mark, specialization);
+        mark_counter += 1;
+        checkMood();
+        cout << "Student " << student.getName() << " got " << mark << endl;
+    }
+
+    virtual void checkMood() {
+        if (mark_counter % 5 == 0) {
+            this->setMoodState((rand() % 2 == 0));
+        }
+    }
+
+    void setMoodState(bool moodState) {
+        MoodState = moodState;
     }
 
     virtual void MoodyMoodMark(Student &student) {
 
         bool exc = student.isExcellentStudent();
+        unsigned int rmark = (rand() % 2 == 0);
 
         if (MoodState && exc) {
             giveMark(student, 5);
+            mark_counter += 1;
+            checkMood();
         }
 
         if (!MoodState && exc) {
-            giveMark(student, (4 + (rand() % 2 == 0)));
+            giveMark(student, (4 + rmark));
+            mark_counter += 1;
+            checkMood();
         }
 
         if (MoodState && !exc) {
             giveMark(student, 4);
+            mark_counter += 1;
+            checkMood();
         }
 
         if (!MoodState && !exc) {
-            giveMark(student, (2 + (rand() % 2 == 0)));
+            giveMark(student, (2 + rmark));
+            mark_counter += 1;
+            checkMood();
         }
+
+        cout << "Student " << student.getName() << " got new mark!" << endl;
 
     }
 
@@ -171,6 +196,21 @@ public:
     }
 };
 
+class RandomMoodTeacher : public Teacher {
+private:
+    int randomNumberMood = (rand() % 10) + 3;
+public:
+    RandomMoodTeacher(const string &name, const string &surname, unsigned int age, Subjects specialization) : Teacher(
+            name, surname, age, specialization) {}
+
+    void checkMood() override {
+        if (mark_counter % randomNumberMood == 0) {
+            this->setMoodState((rand() % 2 == 0));
+        }
+    }
+
+};
+
 int main() {
     srand(time(0));
 
@@ -205,6 +245,11 @@ int main() {
     Lesson Geometry;
     Geometry.addToLesson(Tema);
     Skurihin.MoodyMoodMark(Tema);
+
+    RandomMoodTeacher Stepanova("Alena", "Stepanova", 55, Math);
+    Lesson Algebra;
+    Algebra.addToLesson(Tema);
+    Stepanova.MoodyMoodMark(Tema);
 
     return 0;
 }
