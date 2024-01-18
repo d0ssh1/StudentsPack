@@ -75,6 +75,7 @@ private:
     string surname;
     unsigned int age;
     Subjects specialization;
+
 public:
     Teacher(const string &name, const string &surname, unsigned int age, Subjects specialization) : name(name),
                                                                                                     surname(surname),
@@ -85,9 +86,32 @@ public:
     void giveMark(Student &student, unsigned int mark) {
         student.getMark(mark, specialization);
     }
+
+    void MoodyMoodMark(Student student) {
+        bool MoodState = (rand() % 2 == 0);
+        bool exc = student.isExcellentStudent();
+
+        if (MoodState && exc) {
+            giveMark(student, 5);
+        }
+
+        if (!MoodState && exc) {
+            giveMark(student, (4 + (rand() % 2 == 0)));
+        }
+
+        if (MoodState && !exc) {
+            giveMark(student, 4);
+        }
+
+        if (!MoodState && !exc) {
+            giveMark(student, (2 + (rand() % 2 == 0)));
+        }
+
+    }
 };
 
 int main() {
+    srand(time(0));
     Student Tema("Artem", "Orlov", 19);
     Tema.getMark(5, Math);
     cout << Tema.isExcellentStudent() << endl;
