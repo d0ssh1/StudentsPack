@@ -191,9 +191,9 @@ public:
     vector<Student> Stud;
     Teacher teacher;
 
-    explicit Lesson(const Teacher &teacherofthelesson) : teacher(teacher) {}
+    explicit Lesson(Teacher teacherOfTheLesson) : teacher(teacherOfTheLesson) {}
 
-    void addToLesson(Student student) {
+    void addToLesson(const Student& student) {
         Stud.push_back(student);
     }
 
@@ -427,8 +427,8 @@ public:
                                   "You are the worst child in the world! Heck...",
                                   "What are you doing this evening? Do you want to sit on the bench with me?"};
 
-        int randPhrase = rand() % Phrases.size();
-        cout << Phrases[randPhrase] << endl;
+        int randPhrase = (rand() % Phrases.size());
+        cout << Phrases[randPhrase];
 
     }
 
