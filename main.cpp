@@ -32,6 +32,7 @@ public:
         return this->name == other.name;
     };
 
+
     void getMark(int mark, Subjects subject) {
         switch (subject) {
             case Math: {
@@ -101,6 +102,15 @@ public:
         checkMood();
         cout << "Student " << student.getName() << " got " << mark << endl;
     }
+
+    const string &getName() const {
+        return name;
+    }
+
+    bool operator==(const Teacher &teacher) const {
+        // Пример сравнения по имени
+        return this->name == teacher.name;
+    };
 
     virtual void checkMood() {
         if (mark_counter % 5 == 0) {
@@ -179,12 +189,19 @@ public:
 class Lesson {
 public:
     vector<Student> Stud;
+    Teacher teacher;
+
+    explicit Lesson(const Teacher &teacherofthelesson) : teacher(teacher) {}
 
     void addToLesson(Student student) {
         Stud.push_back(student);
     }
 
-    void Marking(Teacher teacher) {
+    const Teacher &getTeacher() const {
+        return teacher;
+    }
+
+    void Marking() {
         if (teacher.isMoodState()) {
             Student bedolaga = Stud[rand() % Stud.size()];
             teacher.MoodyMoodMark(bedolaga);
@@ -227,13 +244,23 @@ private:
                                     " drank two liters of water a day and brushed teeth ",
                                     " shoots tic tol videos about dragons and dances to cool music "};
     string name;
-    bool MoodState = (rand() % 2 == 0);
+
 public:
+    bool MoodState = (rand() % 2 == 0);
 
     explicit Parent(const string &name) : name(name) {}
 
     void addChild(Student &student) {
         childs.push_back(student);
+    }
+
+    bool isMyChild(Student &student) {
+        auto it = find(childs.begin(), childs.end(), student);
+        if (it != childs.end()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     void tellAboutChild(Student &student) {
@@ -270,10 +297,10 @@ public:
 
     void tellAboutAllChildrenShort() {
         for (Student &child: childs) {
-            if (child.isExcellentStudent()) {
-                cout << "All of my children amazing!\n";
+            if (child.isExcellentStudent() && MoodState) {
+                cout << "All of my children are amazing!\n";
             } else {
-                cout << "Hmhm.. Weather is amazing today ;)\n";
+                cout << "Hmhm.. Weather is amazing today ;) and I don't have any children-n.. mm... by-e~~~ (damn)\n";
             }
         }
     }
@@ -284,6 +311,96 @@ public:
             cout << endl;
         }
     }
+};
+
+class Meeting {
+private:
+    vector<Parent> ParentOnMeeting;
+    vector<Teacher> TeachersOnMeeting;
+    vector<Lesson> LessonsOnMeeting;
+    vector<Student> StudentsForDiscuss;
+
+    vector<Teacher> EmptyTeachers;
+    vector<Student> StudentsWithSuspiciousParents;
+
+public:
+    void addParents(const vector<Parent> &parents) {
+        ParentOnMeeting.insert(ParentOnMeeting.end(), parents.begin(), parents.end());
+    }
+
+    void addTeachers(const vector<Teacher> &teachers) {
+        TeachersOnMeeting.insert(TeachersOnMeeting.end(), teachers.begin(), teachers.end());
+    }
+
+    void addLessons(const vector<Lesson> &lessons) {
+        LessonsOnMeeting.insert(LessonsOnMeeting.end(), lessons.begin(), lessons.end());
+    }
+
+    void checkTeachersOfLessons() {
+        for (const Lesson &lesson: LessonsOnMeeting) {
+            // Получаем преподавателя занятия
+            Teacher lessonTeacher = lesson.getTeacher();
+
+            // Проверяем, присутствует ли этот преподаватель на собрании
+            if (find(TeachersOnMeeting.begin(), TeachersOnMeeting.end(), lessonTeacher) == TeachersOnMeeting.end()) {
+                EmptyTeachers.push_back(lessonTeacher);
+            }
+        }
+    }
+
+    void checkParentsOfStudents() {
+        for (Student &student: StudentsForDiscuss) {
+            bool parentFound = false;
+
+            for (Parent &parent: ParentOnMeeting) {
+                if (parent.isMyChild(student)) {
+                    parentFound = true;
+                    break; // Родитель найден, переходим к следующему ученику
+                }
+            }
+
+            if (!parentFound) {
+                // Добавить ученика в список, если его родитель не найден
+                StudentsWithSuspiciousParents.push_back(student);
+            }
+        }
+    }
+
+    void conductMeeting() {
+        checkTeachersOfLessons();
+        checkParentsOfStudents();
+        discussStudents();
+        generateMeetingReport();
+    }
+
+    void discussStudents() {
+        for (const Student &student: StudentsForDiscuss) {
+            // Проверяем, обсуждается ли этот студент (есть ли у него родитель на собрании)
+            if (std::find(StudentsWithSuspiciousParents.begin(), StudentsWithSuspiciousParents.end(), student) ==
+                StudentsWithSuspiciousParents.end()) {
+                // Логика обсуждения студента
+                cout << "Discussing student " << student.getName() << endl;
+            } else {
+                cout << "Student " << student.getName() << " is not discussing because his parent is apsent\n" << endl;
+            }
+        }
+    }
+
+    void generateMeetingReport() {
+        cout << "Report about meeting:" << endl;
+        cout << "Apsent teachers:" << endl;
+        for (const Teacher &teacher: EmptyTeachers) {
+            // Вывод информации об отсутствующих учителях
+            cout << teacher.getName() << endl;
+        }
+        cout << "Students with apsent parents:" << endl;
+        for (const Student &student: StudentsWithSuspiciousParents) {
+            // Вывод информации о студентах с отсутствующими родителями
+            cout << student.getName() << endl;
+        }
+    }
+
+
 };
 
 int main() {
@@ -303,26 +420,26 @@ int main() {
 
     cout << Tema.isExcellentStudent() << endl;
 
-    Lesson Matth;
+    Lesson Matth(Eugene);
     Matth.addToLesson(Tema);
-    Matth.Marking(Eugene);
+    Matth.Marking();
 
-    Lesson Phys;
+    Lesson Phys(Vika);
     Phys.addToLesson(Kolya);
-    Phys.Marking(Vika);
+    Phys.Marking();
 
     GODTeacher Boris("Boris", "Abakumov", 24, Math);
-    Lesson OOP;
+    Lesson OOP(Boris);
     OOP.addToLesson(Tema);
     Boris.MoodyMoodMark(Tema);
 
     DEVILTeacher Skurihin("Eugene", "Skurihin", 100, Math);
-    Lesson Geometry;
+    Lesson Geometry(Skurihin);
     Geometry.addToLesson(Tema);
     Skurihin.MoodyMoodMark(Tema);
 
     RandomMoodTeacher Stepanova("Alena", "Stepanova", 55, Math);
-    Lesson Algebra;
+    Lesson Algebra(Stepanova);
     Algebra.addToLesson(Tema);
     Stepanova.MoodyMoodMark(Tema);
 
@@ -332,5 +449,6 @@ int main() {
     Natalya.addChild(Kolya);
     Natalya.tellAboutAllChildren();
 
+    
     return 0;
 }
