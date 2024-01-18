@@ -51,6 +51,10 @@ public:
         }
     }
 
+    const string &getName() const {
+        return name;
+    }
+
     static bool isExcellentInSubject(const vector<unsigned int> &marks) {
         if (marks.empty()) { return true; }
 
@@ -75,8 +79,9 @@ private:
     string surname;
     unsigned int age;
     Subjects specialization;
-
+    bool MoodState = (rand() % 2 == 0); // 1 = good, 0 = bad
 public:
+
     Teacher(const string &name, const string &surname, unsigned int age, Subjects specialization) : name(name),
                                                                                                     surname(surname),
                                                                                                     age(age),
@@ -88,7 +93,7 @@ public:
     }
 
     void MoodyMoodMark(Student student) {
-        bool MoodState = (rand() % 2 == 0);
+
         bool exc = student.isExcellentStudent();
 
         if (MoodState && exc) {
@@ -108,15 +113,62 @@ public:
         }
 
     }
+
+    bool isMoodState() const {
+        return MoodState;
+    }
+};
+
+class Lesson {
+public:
+    vector<Student> Stud;
+
+    void addToLesson(Student student) {
+        Stud.push_back(student);
+    }
+
+    void Marking(Teacher teacher) {
+        if (teacher.isMoodState()) {
+            Student bedolaga = Stud[rand() % Stud.size()];
+            teacher.MoodyMoodMark(bedolaga);
+            cout << "Student " << bedolaga.getName() << " got new mark!\n";
+            // Берем рандомное число и от него берем остаток от деления на количество студентов.
+            // Получится рандомный студент и ему делаем оценку по настроению
+        }
+
+        if (!teacher.isMoodState()) {
+            for (Student stud: Stud) {
+                teacher.MoodyMoodMark(stud);
+                cout << "All of the students got new mark >:(\n";
+            }
+        }
+    }
 };
 
 int main() {
     srand(time(0));
+
+
     Student Tema("Artem", "Orlov", 19);
+    Student Kolya("Nikolay", "Gavrilyouk", 19);
+
     Tema.getMark(5, Math);
     cout << Tema.isExcellentStudent() << endl;
+
     Teacher Eugene("Eugene", "Abramovich", 19, Math);
+    Teacher Vika("Viktoria", "Hromova", 19, Physics);
+
     Eugene.giveMark(Tema, 3);
+
     cout << Tema.isExcellentStudent() << endl;
+
+    Lesson OOP;
+    OOP.addToLesson(Tema);
+    OOP.Marking(Eugene);
+
+    Lesson Phys;
+    Phys.addToLesson(Kolya);
+    Phys.Marking(Vika);
+
     return 0;
 }
