@@ -69,9 +69,30 @@ public:
     }
 };
 
+class Teacher {
+private:
+    string name;
+    string surname;
+    unsigned int age;
+    Subjects specialization;
+public:
+    Teacher(const string &name, const string &surname, unsigned int age, Subjects specialization) : name(name),
+                                                                                                    surname(surname),
+                                                                                                    age(age),
+                                                                                                    specialization(
+                                                                                                            specialization) {}
+
+    void giveMark(Student &student, unsigned int mark) {
+        student.getMark(mark, specialization);
+    }
+};
+
 int main() {
     Student Tema("Artem", "Orlov", 19);
     Tema.getMark(5, Math);
-    cout << Tema.isExcellentStudent();
+    cout << Tema.isExcellentStudent() << endl;
+    Teacher Eugene("Eugene", "Abramovich", 19, Math);
+    Eugene.giveMark(Tema, 3);
+    cout << Tema.isExcellentStudent() << endl;
     return 0;
 }
